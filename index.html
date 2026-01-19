@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLN - Go to My PLN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: rgba(255, 255, 255, 1);
+            position: relative;
+        }
+
+        .container {
+            width: 1440px;
+            height: 876px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orb-1 {
+            width: 804px;
+            height: 804px;
+            background: rgba(0, 174, 239, 0.30);
+            filter: blur(56px);
+            position: absolute;
+            bottom: 309px;
+            right: 725.82px;
+            border-radius: 804px;
+        }
+
+        .orb-2 {
+            width: 611px;
+            height: 611px;
+            border-radius: 611px;
+            background: rgba(237, 28, 36, 0.20);
+            filter: blur(80px);
+            position: absolute;
+            bottom: 418px;
+            left: 482.18px;
+        }
+
+        .orb-3 {
+            width: 1440px;
+            height: 876px;
+            border-radius: 720px;
+            background: rgba(255, 242, 0, 0.20);
+            filter: blur(80px);
+            position: absolute;
+            bottom: 333px;
+            left: 801.18px;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 92px;
+height: 126px;
+aspect-ratio: 46/63;
+        }
+
+        .button {
+         display: flex;
+        padding: 12px 20px;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        align-self: stretch;   
+        border-radius: var(--border-10px, 10px);
+        border: 1px solid #C0B709;
+        background: #FFF200;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                height: 812px;
+            }
+
+            .orb-1 {
+            width: 339px;
+height: 339px;
+            border-radius: 339px;
+            filter: blur(14.583334922790527px);
+            position: absolute;
+            bottom: 534.72px;
+            right: 188.76px;
+        }
+
+        .orb-2 {
+            width: 257px;
+height: 257px;
+            border-radius: 257px;
+background: rgba(237, 28, 36, 0.20);
+filter: blur(20.83333396911621px);
+            position: absolute;
+            bottom: 580.72px;
+            left: 88.24px;
+        }
+
+        .orb-3 {
+            width: 303px;
+height: 303px;
+            border-radius: 303px;
+background: rgba(255, 242, 0, 0.20);
+filter: blur(20.83333396911621px);
+            position: absolute;
+            bottom: 544.72px;
+            left: 222.24px;
+        }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <div class="content">
+            <img class="logo" src="https://wqgsloibkatnviohlsiv.supabase.co/storage/v1/object/public/sandbox/cxp/120c523f8d2949e2512e11704368fceff6d25b2f.png" />
+            <button class="button">Go to My PLN</button>
+        </div>
+    </div>
+</body>
+</html>
