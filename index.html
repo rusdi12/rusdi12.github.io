@@ -139,8 +139,185 @@ filter: blur(20.83333396911621px);
 
         <div class="content">
             <img class="logo" src="https://wqgsloibkatnviohlsiv.supabase.co/storage/v1/object/public/sandbox/cxp/120c523f8d2949e2512e11704368fceff6d25b2f.png" />
-            <button class="button">Go to PLN Mobile</button>
+            <button class="button" id="redirect-button">Go to PLN Mobile V1</button>
         </div>
     </div>
+    <script>
+    console.log('begin script');
+      let appOpened = false;
+      let targetUrl = "https://aixp-rudder-api-staging.digitallab.id/r/ios13014th?utm_source=facebook";
+      let iosStoreUrl = "https://apps.apple.com/nz/app/pln-mobile/id1299581030";
+      let androidStoreUrl = "https://play.google.com/store/apps/details?id=com.icon.pln123&hl=id";
+      let storeRedirectSent = false;
+      const trackingToken = "11122233345566";
+      const slug = "ios13014th";
+
+      function getStoreUrl(platform) {
+        if (platform.isIOS && iosStoreUrl) return iosStoreUrl;
+        if (platform.isAndroid && androidStoreUrl) return androidStoreUrl;
+        return androidStoreUrl || iosStoreUrl || '/';
+      }
+
+      function detectPlatform() {
+        let ua = navigator.userAgent || '';
+        let isIOS = /iPhone|iPad|iPod|iOS/i.test(ua);
+        let isAndroid = /Android/i.test(ua);
+        return { isIOS: isIOS, isAndroid: isAndroid };
+      }
+
+      function trackStoreRedirect(platform, url) {
+        if (storeRedirectSent) return;
+        storeRedirectSent = true;
+
+        let platformLabel = platform.isAndroid
+          ? 'android'
+          : platform.isIOS
+          ? 'ios'
+          : 'unknown';
+
+        let body = {
+          trackingToken: trackingToken,
+          slug: slug,
+          platform: platformLabel,
+          storeUrl: url || null
+        };
+
+        let serialized = JSON.stringify(body);
+
+        // if (navigator.sendBeacon) {
+        //   try {
+        //     var blob = new Blob([serialized], { type: 'application/json' });
+        //     navigator.sendBeacon('/deeplink/store-redirect', blob);
+        //     return;
+        //   } catch (err) {
+        //     // swallow and fallback
+        //   }
+        // }
+
+        // fetch('/deeplink/store-redirect', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: serialized,
+        //   keepalive: true,
+        //   credentials: 'omit'
+        // }).catch(function () {
+        //   // ignore errors
+        // });
+        console.log('Store redirect sent');
+      }
+
+      (function collectData() {
+        console.log('Begin collect');
+        var payload = {
+          trackingToken: "${escapedToken}",
+          slug: "${escapedSlug}",
+          collectedAt: new Date().toISOString(),
+          data: gatherFingerprint()
+        };
+
+        function gatherFingerprint() {
+          var nav = window.navigator || {};
+          var scr = window.screen || {};
+          var intl = (window.Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions() : {};
+          var connection = nav.connection || nav.mozConnection || nav.webkitConnection;
+          var uaData = nav.userAgentData ? {
+            mobile: nav.userAgentData.mobile || null,
+            platform: nav.userAgentData.platform || null,
+            brands: Array.isArray(nav.userAgentData.brands) ? nav.userAgentData.brands : null
+          } : null;
+
+          return {
+            language: nav.language || null,
+            languages: Array.isArray(nav.languages) ? nav.languages : null,
+            platform: nav.platform || null,
+            userAgent: nav.userAgent || null,
+            vendor: nav.vendor || null,
+            hardwareConcurrency: typeof nav.hardwareConcurrency === "number" ? nav.hardwareConcurrency : null,
+            deviceMemory: typeof nav.deviceMemory === "number" ? nav.deviceMemory : null,
+            maxTouchPoints: typeof nav.maxTouchPoints === "number" ? nav.maxTouchPoints : null,
+            cookieEnabled: typeof nav.cookieEnabled === "boolean" ? nav.cookieEnabled : null,
+            online: typeof nav.onLine === "boolean" ? nav.onLine : null,
+            colorDepth: typeof scr.colorDepth === "number" ? scr.colorDepth : null,
+            pixelDepth: typeof scr.pixelDepth === "number" ? scr.pixelDepth : null,
+            screenResolution: (typeof scr.width === "number" && typeof scr.height === "number") ? [scr.width, scr.height] : null,
+            viewport: (typeof window.innerWidth === "number" && typeof window.innerHeight === "number") ? [window.innerWidth, window.innerHeight] : null,
+            timezone: intl && intl.timeZone ? intl.timeZone : null,
+            prefersColorScheme: window.matchMedia ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : null) : null,
+            connection: connection ? {
+              effectiveType: connection.effectiveType || null,
+              downlink: typeof connection.downlink === "number" ? connection.downlink : null,
+              rtt: typeof connection.rtt === "number" ? connection.rtt : null,
+              saveData: typeof connection.saveData === "boolean" ? connection.saveData : null
+            } : null,
+            uaData: uaData
+          };
+        }
+
+        function sendFingerprint(body) {
+          var serialized = JSON.stringify(body);
+          if (navigator.sendBeacon) {
+            try {
+              var blob = new Blob([serialized], { type: 'application/json' });
+              navigator.sendBeacon('/deeplink/fingerprint', blob);
+              return Promise.resolve();
+            } catch (err) {
+              // swallow and fallback
+            }
+          }
+          return fetch('/deeplink/fingerprint', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: serialized,
+            keepalive: true,
+            credentials: 'omit'
+          }).catch(function () {
+            // ignore errors
+          });
+        }
+
+        // Track if app opened via visibility change
+        document.addEventListener('pagehide', function() {
+          if (document.hidden) {
+            appOpened = true;
+          }
+        });
+
+        // sendFingerprint(payload).finally(function () {
+        //   console.log('Done');
+        // });
+      })();
+
+      function executeRedirect() {
+        const platform = detectPlatform();
+        const storeUrl = getStoreUrl(platform);
+        if (targetUrl && (platform.isIOS || platform.isAndroid)) {
+          // Try to open app via universal link
+          window.location.replace(targetUrl);
+
+          // If app doesn't open, redirect to store after 1.5s
+          setTimeout(function () {
+            if (!appOpened) {
+              trackStoreRedirect(platform, storeUrl);
+              window.location.replace(storeUrl);
+            }
+          }, 1500);
+        } else {
+          // No universal link or desktop, go directly to store
+          trackStoreRedirect(platform, storeUrl);
+          window.location.replace(storeUrl);
+        }
+      }
+
+      function copyDataToClipBoard() {
+        const data = ["deeplinkData",`${trackingToken}`,`${slug}`,"facebook","click"].join(':');
+        console.log(data);
+        navigator.clipboard.writeText(data)
+          .finally(executeRedirect);
+      }
+
+      document.getElementById('redirect-button').addEventListener('click', function() {
+        copyDataToClipBoard();
+      });
+    </script>
 </body>
 </html>
